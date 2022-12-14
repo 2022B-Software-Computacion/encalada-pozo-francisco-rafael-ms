@@ -55,6 +55,30 @@ fun imprimirNombre(nombre: String): Unit {
 
 //Segunda parte
 
+abstract class NumerosJava{
+    protected val numeroUno: Int;
+    private val numeroDos: Int;
+
+    constructor(
+            uno: Int
+            dos: Int
+    ){ //bloque codigo constructor
+        this.numeroUno = uno;
+        this.numeroDos = dos;
+        println("Inicializado")
+    }
+}
+
+abstract class Numeros(
+        uno: Int
+){
+    var cedula: String = "";
+    init {
+        this.numeroUno = uno;
+        this.cedula = dos;
+    }
+}
+
 //Tercera parte
 
 //Cuarta parte
