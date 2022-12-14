@@ -55,24 +55,42 @@ fun imprimirNombre(nombre: String): Unit {
 
 //Segunda parte
 
-abstract class NumerosJava{
+abstract class NumerosJava {
     protected val numeroUno: Int;
     private val numeroDos: Int;
 
     constructor(
             uno: Int
             dos: Int
-    ){ //bloque codigo constructor
+    ) { //bloque codigo constructor
         this.numeroUno = uno;
         this.numeroDos = dos;
         println("Inicializado")
     }
 }
 
+class Suma(
+        uno: Int,
+        dos: Int
+) : Numeros(uno, dos) {
+    init {
+        this.numeroUno
+        this.numeroDos
+    }
+    constructor(
+            uno: Int?,
+            dos: Int
+    ):this( //llamar al constructor primario
+            if(uno == null) 0 else uno,
+            dos
+    )
+}
+
 abstract class Numeros(
         uno: Int
-){
+) {
     var cedula: String = "";
+
     init {
         this.numeroUno = uno;
         this.cedula = dos;
@@ -86,20 +104,19 @@ abstract class Numeros(
 // 1) Devolver una expresion TRUE/FALSE
 // 2) Nuevo arreglo filtrado
 val respuestaFilter: List<Int> = arregloDinamico
-    .filter {valorActual: Int ->
-    val mayoresACinco: Boolean = valorActual > 5
-    return@filter mayoresACinco
-    }
+        .filter { valorActual: Int ->
+            val mayoresACinco: Boolean = valorActual > 5
+            return@filter mayoresACinco
+        }
 
 val respuestaAll: Boolean = arregloDinamico
-    .all { valorActual: Int ->
-        return@all (valorActual > 5)
+        .all { valorActual: Int ->
+            return@all (valorActual > 5)
 
-    }
+        }
 
 //REDUCE = VALOR ACUMULADO
-val respuestaReduce : Int = arregloDinamico
-    .reduce{
-        acumulado: Int, valorActual: Int ->
-        return@reduce (acumulado + valorActual)
-    }
+val respuestaReduce: Int = arregloDinamico
+        .reduce { acumulado: Int, valorActual: Int ->
+            return@reduce (acumulado + valorActual)
+        }
