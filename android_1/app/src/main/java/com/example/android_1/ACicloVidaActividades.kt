@@ -1,6 +1,7 @@
 package com.example.android_1
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -70,6 +71,26 @@ class ACicloVidaActividades : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         mostrarSnackbar("onDestroy")
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.run {
+            //Guardar las variables
+            // Primitivos
+            putString("textoGuardado", textoGlobal)
+            //putInt...
+        }
+        super.onSaveInstanceState(outState)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        val textoRecuperado: String? = savedInstanceState.getString("textoGuardado")
+
+        if(textoRecuperado!=null){
+            mostrarSnackbar(textoRecuperado)
+            textoGlobal = textoRecuperado
+        }
     }
 
 
