@@ -1,62 +1,16 @@
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
-import java.time.LocalDate
-import java.util.Scanner
-import java.util.StringJoiner
+import java.util.*
 
 //Global variables
 val scanner = Scanner(System.`in`)
-var selectedOption = 0
+var input = "0"
+const val printGreen = "\u001B[3m\u001B[32m"
+const val printBlue = "\u001b[34m"
+const val printRed = "\u001b[31m"
+const val printReset = "\u001B[0m"
 
-open class DataFile(
-    var firstParameter: Any?,
-    var secondParameter: Any?,
-    var thirdParameter: Any?,
-    var fourthParameter: Any?,
-    var fifthParameter: Any?,
-) : java.io.Serializable {
-    open fun setParameter(index: Int, content: Any) {
-    }
-}
-
-/*
-data class Genre(
-    override var firstParameter: Any?,  //Genre
-    override var secondParameter: Any?, //startDate
-    override var thirdParameter: Any?,  //startCountry
-    override var fourthParameter: Any?, //signature
-    override var fifthParameter: Any?,  //bpmRange
-) : DataFile(firstParameter, secondParameter, thirdParameter, fourthParameter, fifthParameter)
-
-data class Band(
-    override var firstParameter: Any?,  //bandName
-    override var secondParameter: Any?, //creationDate
-    override var thirdParameter: Any?,  //genreName
-    override var fourthParameter: Any?, //startLocation
-    override var fifthParameter: Any?,  //creatorsName
-) : DataFile(firstParameter, secondParameter, thirdParameter, fourthParameter, fifthParameter)
-*/
-data class Genre(
-    var genreName: String,
-    var startPeriod: String,
-    var startCountry: String,
-    var signature: String,
-    var bpmAverage: Double,
-) : DataFile(genreName, startPeriod, startCountry, signature, bpmAverage) {
-    override fun setParameter(index: Int, content: Any) {
-        this.genreName = content.toString()
-    }
-}
-
-
-data class Band(
-    var bandName: String,
-    var creationYear: Int,
-    var genre: Genre,
-    var typeOfBand: Char,
-    var analogicalInstruments: Boolean,
-) : DataFile(bandName, genre, creationYear, typeOfBand, analogicalInstruments)
 
 fun saveData(userData: DataFile, file: File) {
     file.parentFile.mkdir()
@@ -66,7 +20,12 @@ fun saveData(userData: DataFile, file: File) {
     }
 }
 
-fun loadData(directory: String): File? {
+fun readInput(): String {
+    print("\n${printGreen}admin>${printReset} ")
+    return scanner.next()
+}
+
+fun loadData(directory: String): File {
     return File(directory)
 }
 
@@ -77,13 +36,13 @@ fun fileToDataFile(file: File): DataFile? {
 }
 
 fun loadFiles(directory: String): File? {
-    val directory = File(directory)
-    val files = directory.listFiles()
-    for (file in files) {
+    val dir = File(directory)
+    val files = dir.listFiles()
+    for (file in files!!) {
         if (file.isDirectory) {
             loadFiles(file.absolutePath)
+            print(file)
         } else {
-            println(file.absolutePath)
             return file
         }
     }
@@ -94,80 +53,86 @@ fun loadFiles(directory: String): File? {
 //Create
 fun createFile() {
     println("What do you want to create?")
-    var dataFile: DataFile
+    val dataFile: DataFile
 
     while (true) {
         showFileOptions()
-        selectedOption = scanner.nextInt()
-        when (selectedOption) {
-            1 -> {
-                print("\tIngrese el nombre del genero: ")
-                var genreName: String = scanner.next()
+        input = readInput()
+        when (input) {
+            "1" -> {
+                print("\tEnter the Genre's name: ")
+                val genreName: String = scanner.next()
 
-                print("\tIngrese el periodo de aparecimiento del genero: ")
-                var startPeriod: String = scanner.next()
+                print("\tEnter the Genre's appearance period: ")
+                val startPeriod: String = scanner.next()
 
-                print("\tIngrese el pais de aparecimiento del genero: ")
-                var startCountry: String = scanner.next()
+                print("\tEnter the Gender's appearance country: ")
+                val startCountry: String = scanner.next()
 
-                print("\tIngrese las tempo del genero: ")
-                var signature: String = scanner.next()
+                print("\tEnter the Gender's signature: ")
+                val signature: String = scanner.next()
 
-                print("\tIngrese los bpm del genero: ")
-                var bmpAverage: Double = scanner.nextDouble()
+                print("\tEnter the Gender's BPM (Bits Per Minute): ")
+                val bmpAverage: Double = scanner.nextDouble()
 
                 dataFile = Genre(genreName, startPeriod, startCountry, signature, bmpAverage)
-                var genreFile = File("DataFiles\\$genreName", "$genreName.bin")
+                val genreFile = File("DataFiles\\$genreName", "$genreName.bin")
                 saveData(dataFile, genreFile)
                 break
             }
-            2 -> {
-                print("\tIngrese el nombre de la banda: ")
-                var bandName: String = scanner.next()
+            "2" -> {
+                print("\tEnter the Band's name: ")
+                val bandName: String = scanner.next()
 
-                print("\tIngrese el año de creacion de la banda: ")
-                var creationYear: Int = scanner.nextInt()
+                print("\tEnter the Band's creation year: ")
+                val creationYear: Int = scanner.nextInt()
 
-                print("\tGenero al que pertenece la banda: ")
+                println("\tBand's gender: ")
                 File("DataFiles").listFiles { _, name -> !name.contains(".") }
-                    .forEach {
+                    ?.forEach {
                         println("\t\t- ${it.name}")
                     }
-                print("\tIngrese el genero: ")
-                var genrePath: String = scanner.next()
-                var file: File? = loadData("DataFiles\\$genrePath\\$genrePath.bin")
-                if (file == null) {
+                print("\tEnter the gender: ")
+                val genrePath: String = scanner.next()
+                val file: File = loadData("DataFiles\\$genrePath\\$genrePath.bin")
+                if (!file.isFile) {
                     println("Insert a valid Genre")
                     break
                 }
-                var genre: Genre = fileToDataFile(file) as Genre
+                val genre: Genre = fileToDataFile(file) as Genre
 
-                print("\tTipo de banda:" +
-                        "\n\t\t1. i(instrumental)" +
-                        "\n\t\t2. v(with vocals)" +
-                        "\n\t\t3. o(only vocals)" +
-                        "\n\tIngrese el tipo de banda: ")
+                print(
+                    "\tBand's type:" +
+                            "\n\t\t1. i(instrumental)" +
+                            "\n\t\t2. v(with vocals)" +
+                            "\n\t\t3. o(only vocals)" +
+                            "\n\tEnter the Band's type: "
+                )
                 var typeOfBand = 'v'
-                when(scanner.nextInt()){
-                    1 -> typeOfBand = 'i'
-                    3 -> typeOfBand = 'o'
-                    else -> println("\tSe ha seleccionado \"only vocals\" por defecto")
+                when (readInput()) {
+                    "1" -> typeOfBand = 'i'
+                    "2" -> typeOfBand = 'v'
+                    "3" -> typeOfBand = 'o'
+                    else -> println("\tWas selected \"with vocals\" by defect")
                 }
 
 
-                print("\t¿La banda es analogica o es digital?" +
-                        "\n\t\t1. Analogica" +
-                        "\n\t\t2. Digital" +
-                        "\n\tIngrese la opcion: ")
-                var analogicalInstrumentsOption: Int = scanner.nextInt()
-                var analogicalInstruments = analogicalInstrumentsOption==1
+                print(
+                    "\tThe band is analogical or digital?" +
+                            "\n\t\t1. Analogical" +
+                            "\n\t\t2. Digital" +
+                            "\n\tEnter an option: "
+                )
+                val analogicalInstrumentsOption: Int = scanner.nextInt()
+                val analogicalInstruments = analogicalInstrumentsOption == 1
 
                 dataFile = Band(bandName, creationYear, genre, typeOfBand, analogicalInstruments)
-                var bandFile = File("DataFiles\\${genre.genreName}", "$bandName.bin")
+                val bandFile = File("DataFiles\\${genre.genreName}", "$bandName.bin")
                 print(bandFile)
                 saveData(dataFile, bandFile)
                 break
             }
+            else -> println("You had select an invalid option")
         }
     }
 
@@ -176,22 +141,72 @@ fun createFile() {
 
 
 //Read
-fun readFile() {
+fun readFile(dataFileName: String): DataFile? {
+    var dataFile: DataFile?
+    while (true) {
+
+        var file = loadData("DataFiles\\$dataFileName\\$dataFileName.bin")
+
+        if (!file.isFile) {
+            File("DataFiles").listFiles { _, name -> !name.contains(".") }
+                ?.forEach {
+                    file = loadData("DataFiles\\${it.name}\\$dataFileName.bin")
+                    if (file.isFile) {
+                        dataFile = fileToDataFile(file)
+                        return dataFile
+                    }
+                }
+            continue
+        }
+
+        dataFile = fileToDataFile(file)
+        return dataFile
+
+    }
 
 }
 
 //Update
 fun updateFile() {
+    print("Insert the name of the Data File: ")
+    input = readInput()
+    val dataFile = readFile(input)
+    println("DataFile(firstParameter, secondParameter, thirdParameter, fourthParameter, fifthParameter)")
 
+    println("\nfirstParameter: $printGreen${dataFile?.firstParameter}$printReset")
+
+    print("secondParameter: ")
+    dataFile?.secondParameter = scanner.next()
+
+    print("thirdParameter: ")
+    dataFile?.thirdParameter = scanner.next()
+
+    print("fourthParameter: ")
+    dataFile?.fourthParameter = scanner.next()
+
+    print("fifthParameter: ")
+    dataFile?.fifthParameter = scanner.next()
+
+    if (dataFile != null) {
+        if (dataFile is Genre) {
+            dataFile.setParameters()
+            saveData(dataFile,File("DataFiles\\${dataFile.firstParameter}\\${dataFile.firstParameter}.bin"))
+        }
+        if (dataFile is Band) {
+            dataFile.setParameters()
+            saveData(dataFile,File("DataFiles\\${dataFile.genre.genreName}\\${dataFile.firstParameter}.bin"))
+        }
+    }
+    println(dataFile)
 }
 
 //Delete
-fun deleteFile() {
-
+fun deleteFile(file: File):Boolean {
+    return file.deleteRecursively()
 }
 
 fun showMenu() {
-    println("\t\tGENRE - BAND")
+    println("\n\t\tGENRE - BAND")
     println("1. Create a new File")
     println("2. Read a File")
     println("3. Update a File")
@@ -208,13 +223,44 @@ fun showFileOptions() {
 fun iterateMainMenu() {
     while (true) {
         showMenu()
-        selectedOption = scanner.nextInt()
-        when (selectedOption) {
-            1 -> createFile()
-            2 -> readFile()
-            3 -> updateFile()
-            4 -> deleteFile()
-            5 -> break
+        input = readInput()
+        when (input) {
+            "1" -> createFile()
+            "2" -> {
+                print("Insert the name of the Data File: ")
+                input = readInput()
+                println(readFile(input))
+            }
+            "3" -> updateFile()
+            "4" -> {
+                print("Insert the name of the Data File: ")
+                input = readInput()
+                var file = loadData("DataFiles\\$input\\$input.bin")
+                if (file.exists()){
+                    if (!file.isFile) {
+                        File("DataFiles").listFiles { _, name -> !name.contains(".") }
+                            ?.forEach {
+                                file = loadData("DataFiles\\${it.name}\\$input.bin")
+                            }
+                        deleteFile(file)
+                        continue
+                    }
+
+                    println("${printRed}Are you sure deleting ${file.name}? (y/n)" +
+                            "\nThis will delete all files that have ${file.name} as their genre!" +
+                            printReset)
+
+                    if (readInput()=="y"){
+                        deleteFile(file.parentFile)
+                    }else{
+                        println("No file was deleted")
+                    }
+
+                }else {
+                    println("There's no file with the name $input")
+                }
+            }
+            "5" -> break
             else -> println("You had select an invalid option")
         }
     }
