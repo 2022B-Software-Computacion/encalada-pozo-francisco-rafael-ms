@@ -240,20 +240,38 @@ fun iterateMainMenu() {
         showMenu()
         input = readInput()
         when (input) {
+            //Create
             "1" -> createFile()
+
+            //Read
             "2" -> {
                 println("Insert the name of the Data File: ")
                 input = readInput()
-                val dataFile = fileToDataFile(readFile(input))
+                val file = readFile(input)
+                val dataFile = fileToDataFile(file)
                 println(dataFile)
+                if (file != null && file.nameWithoutExtension == file.parentFile.nameWithoutExtension) {
+                    if (file.parentFile.isDirectory) {
+                        println("\n${printBlue}Bands:")
+                        for (name in file.parentFile.listFiles()!!) {
+                            println("\t- " + name.nameWithoutExtension)
+                        }
+                        print(printReset)
+                    }
+                }
             }
+
+            //Update
             "3" -> updateFile()
+
+            //Delete
             "4" -> {
                 println("Insert the name of the Data File: ")
                 input = readInput()
                 var file = loadData("DataFiles\\$input\\$input.bin")
-                if (file.exists()) {
-                    if (!file.isFile) {
+
+                if (file.exists()) { //Delete only if the file exists
+                    if (!file.isFile) { //Delete a band
                         File("DataFiles").listFiles { _, name -> !name.contains(".") }
                             ?.forEach {
                                 file = loadData("DataFiles\\${it.name}\\$input.bin")
@@ -262,9 +280,10 @@ fun iterateMainMenu() {
                         continue
                     }
 
+                    //Delete a genre
                     println(
-                        "${printRed}Are you sure deleting ${file.name}? (y/n)" +
-                                "\nThis will delete all files that have ${file.name} as their genre!" +
+                        "${printRed}Are you sure deleting ${file.nameWithoutExtension}? (y/n)" +
+                                "\nThis will delete all files that have ${file.nameWithoutExtension} as their genre!" +
                                 printReset
                     )
 
@@ -278,7 +297,11 @@ fun iterateMainMenu() {
                     println("There's no file with the name $input")
                 }
             }
+
+            //Exit
             "5" -> break
+
+            //Default
             else -> println("You had select an invalid option")
         }
     }
