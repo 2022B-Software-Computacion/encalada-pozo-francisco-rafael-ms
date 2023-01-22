@@ -4,7 +4,9 @@ data class Genre(
     var startCountry: String,
     var signature: String,
     var bpmAverage: Double,
-) : DataFile(genreName, startPeriod, startCountry, signature, bpmAverage) {
+)
+    : DataFile(genreName, startPeriod, startCountry, signature, bpmAverage)
+{
     override fun toString(): String {
         return "${printBlue}Genre Name: $firstParameter\n" +
                 "Start period: $secondParameter\n" +

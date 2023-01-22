@@ -4,7 +4,9 @@ data class Band(
     var genre: Genre,
     var typeOfBand: Char,
     var analogicalInstruments: Boolean,
-) : DataFile(bandName, genre, creationYear, typeOfBand, analogicalInstruments) {
+)
+    : DataFile(bandName, genre, creationYear, typeOfBand, analogicalInstruments)
+{
     override fun toString(): String {
         return "${printBlue}Band Name: $firstParameter\n" +
                 "Creation year: $creationYear\n" +
@@ -17,7 +19,7 @@ data class Band(
     fun setParameters(){
         bandName = firstParameter as String
         creationYear = (secondParameter as String).toInt()
-        genre = readFile(thirdParameter as String) as Genre
+        genre = fileToDataFile(readFile(thirdParameter as String)) as Genre
         typeOfBand = (fourthParameter as String)[0]
         analogicalInstruments = (fifthParameter as String).toBoolean()
     }
