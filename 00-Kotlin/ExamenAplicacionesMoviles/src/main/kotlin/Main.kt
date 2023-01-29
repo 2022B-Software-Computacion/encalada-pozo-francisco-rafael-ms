@@ -254,7 +254,9 @@ fun iterateMainMenu() {
                     if (file.parentFile.isDirectory) {
                         println("\n${printBlue}Bands:")
                         for (name in file.parentFile.listFiles()!!) {
-                            println("\t- " + name.nameWithoutExtension)
+                            if (name.nameWithoutExtension != file.parentFile.nameWithoutExtension) {
+                                println("\t- " + name.nameWithoutExtension)
+                            }
                         }
                         print(printReset)
                     }
@@ -270,32 +272,34 @@ fun iterateMainMenu() {
                 input = readInput()
                 var file = loadData("DataFiles\\$input\\$input.bin")
 
-                if (file.exists()) { //Delete only if the file exists
-                    if (!file.isFile) { //Delete a band
-                        File("DataFiles").listFiles { _, name -> !name.contains(".") }
-                            ?.forEach {
-                                file = loadData("DataFiles\\${it.name}\\$input.bin")
-                            }
-                        deleteFile(file)
-                        continue
-                    }
 
+                if (!file.isFile) { //Delete a band
+                    File("DataFiles").listFiles { _, name -> !name.contains(".") }
+                        ?.forEach {
+                            file = loadData("DataFiles\\${it.name}\\$input.bin")
+                        }
+                    println(
+                        "${printRed}Are you sure deleting ${file.nameWithoutExtension}? (y/n)" + printReset
+                    )
+                    if (readInput() == "y") {
+                        deleteFile(file)
+                    } else {
+                        println("No file was deleted")
+                    }
+                } else {
                     //Delete a genre
                     println(
                         "${printRed}Are you sure deleting ${file.nameWithoutExtension}? (y/n)" +
                                 "\nThis will delete all files that have ${file.nameWithoutExtension} as their genre!" +
                                 printReset
                     )
-
                     if (readInput() == "y") {
                         deleteFile(file.parentFile)
                     } else {
                         println("No file was deleted")
                     }
-
-                } else {
-                    println("There's no file with the name $input")
                 }
+
             }
 
             //Exit
