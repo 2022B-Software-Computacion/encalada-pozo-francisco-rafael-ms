@@ -8,6 +8,7 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
 import com.firebase.ui.auth.IdpResponse
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
+import com.google.firebase.auth.FirebaseAuth
 
 class IFirebaseUIAuth : AppCompatActivity() {
     private val singInLauncher = registerForActivityResult(
@@ -36,6 +37,8 @@ class IFirebaseUIAuth : AppCompatActivity() {
             singInLauncher.launch(singIntent)
 
         }
+        val btnLogout = findViewById<Button>(R.id.btn_logout_firebase)
+        btnLogout.setOnClickListener { seDeslogueo() }
     }
     fun seLogueo(res: IdpResponse){
         val btnLogin = findViewById<Button>(R.id.btn_login_firebase)
@@ -47,7 +50,17 @@ class IFirebaseUIAuth : AppCompatActivity() {
         }
     }
 
-    fun registrarUsuarioPorPrimeraVez(usuario: IdpResponse){
+    fun registrarUsuarioPorPrimeraVez(
+        usuario: IdpResponse
+    ){
 
+    }
+
+    fun seDeslogueo(){
+        val btnLogin = findViewById<Button>(R.id.btn_login_firebase)
+        val btnLogout = findViewById<Button>(R.id.btn_logout_firebase)
+        btnLogout.visibility = View.INVISIBLE
+        btnLogin.visibility = View.VISIBLE
+        FirebaseAuth.getInstance().signOut()
     }
 }
